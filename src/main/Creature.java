@@ -1,6 +1,7 @@
 package main;
 
 import java.util.HashMap;
+import java.util.Map;
 
 class Creature {
 
@@ -14,12 +15,12 @@ class Creature {
     boolean hostile = true;
 
     // Inventory
-    HashMap<String, Item> inventory = new HashMap<>();
+    Map<String, Item> inventory = new HashMap<>();
     Item equippedWeapon;
     Item equippedArmor;
 
     //Creature Text
-    String description = "A creature appeared. It looks ready to kill you.";
+    String description;
 
     // Methods
     boolean equip(Item item) {
@@ -36,14 +37,15 @@ class Creature {
 
     // Constuctors
     Creature() {
+        name = "Nullbeast";
         maxHealth = 10;
         health = maxHealth;
+        this.description = "A " + this.name + " stands ready to fight.";
     }
 
     Creature(String name) {
         this();
         this.name = name;
-        this.description = "A " + name + " stands ready to fight.";
     }
 
     Creature(String name, int maxHealth, int meleeAttack, int rangedAttack, int luck) {
