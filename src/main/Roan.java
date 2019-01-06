@@ -3,27 +3,26 @@ package main;
 import java.util.Map;
 import java.util.Scanner;
 
-class Roan {
+public class Roan {
 
     // Declarations, inflate Player, Scene, Dice, etc.
-    private static Player player = new Player();
+    private static Player player = Player.builder().name("Player").maxHealth(40).build();
     private static WorldMap map = new WorldMap();
-    private static Scene currentScene = map.location[player.xPos][player.yPos];
+    private static Scene currentScene = map.getLocation(player.getXPos(), player.getYPos());
     private static Scanner scanner = new Scanner(System.in);
     private static Dice dice = new Dice();
     private static boolean playing = true;
 
     public static void main(String[] args) {
-
         // GAMEPLAY LOOP
         System.out.print("You open your eyes and rise slowly to your feet. ");
-        System.out.print(currentScene.description + " ");
+        System.out.print(currentScene.getDescription() + " ");
         System.out.println("You can't seem to remember who you are, or how you arrived here.");
         while(playing) {
             // Check for hostiles, enter combat or dialogue
-            if (!currentScene.creatures.isEmpty()) {
-                for (Map.Entry<String, Creature> creature : currentScene.creatures.entrySet()) {
-                    if (creature.getValue().hostile) {
+            if (!currentScene.getCreatures().isEmpty()) {
+                for (Creature creature : currentScene.getCreatures().values()) {
+                    if (creature.isHostile()) {
                         combat();
                     }
                 }
@@ -63,9 +62,9 @@ class Roan {
                 inventory();
             } else if (input.contains("unequip")) {
                 // Item name parsing done in equip()/unequip() functions
-                unequip(input);
+                player.unequip(input);
             } else if (input.contains("equip")) {
-                equip(input);
+                player.equip(input);
             } else if (input.contains("location") || input.contains("where am i") || input.equals("l")) {
                 location();
             } else if (input.equals("quit") || input.equals("exit")) {
@@ -379,56 +378,6 @@ class Roan {
         }
         if (player.equippedArmor != null) {
             System.out.println("Equipped Armor: [" + player.equippedArmor.name + "]");
-        }
-    }
-
-    private static void equip(String input) {
-//        if (player.inventory.containsKey(input)) {
-//            boolean equipped = player.equip(player.inventory.get(input));
-//            if (equipped)
-//        }
-        boolean hasItem = false;
-        boolean equippedItem = false;
-        for (Map.Entry<String, Item> inventoryItem : player.inventory.entrySet()) {
-            if (input.contains(inventoryItem.getValue().name.toLowerCase())) {
-                hasItem = true;
-                Item item = player.inventory.get(inventoryItem.getKey());
-                equippedItem = player.equip(item);
-            }
-        }
-        if (!hasItem) {
-            System.out.println("You don't have that in your inventory.");
-        } else if (equippedItem) {
-            System.out.println("Item equipped.");
-        } else {
-            System.out.println("You can't equip that.");
-        }
-    }
-
-    private static void unequip(String input) {
-        boolean hasItem = false;
-        boolean unequippedItem = false;
-        if ((player.equippedWeapon != null) && input.contains(player.equippedWeapon.name)) {
-            hasItem = true;
-            player.equippedWeapon = null;
-            unequippedItem = true;
-        } else if ((player.equippedArmor != null) && input.contains(player.equippedArmor.name)) {
-            hasItem = true;
-            player.equippedArmor = null;
-            unequippedItem = true;
-        } else {
-            for (Map.Entry<String, Item> inventoryItem : player.inventory.entrySet()) {
-                if (input.contains(inventoryItem.getValue().name.toLowerCase())) {
-                    hasItem = true;
-                }
-            }
-        }
-        if (!hasItem) {
-            System.out.println("You don't have that in your inventory.");
-        } else if (unequippedItem) {
-            System.out.println("Item unequipped.");
-        } else {
-            System.out.println("That item is not equipped.");
         }
     }
 

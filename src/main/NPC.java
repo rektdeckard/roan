@@ -1,27 +1,44 @@
 package main;
 
-class NPC extends Creature {
+public class NPC extends Creature {
 
     // NPC Statistics (inherited from Creature)
 
     // NPC Location
-    int xPos;
-    int yPos;
+    private int xPos;
+    private int yPos;
 
     // Constructors
-    NPC() {
-        super();
-        hostile = false;
+    // BUILD
+    public static abstract class Builder<T extends Builder<T>> extends Creature.Builder<T> {
+        private int xPos = 5;
+        private int yPos = 5;
+
+        public T position(int xPos, int yPos) {
+            this.xPos = xPos;
+            this. yPos = yPos;
+            return self();
+        }
+
+        public NPC build() {
+            return new NPC(this);
+        }
     }
 
-    NPC(String name, int maxHealth, int meleeAttack, int rangedAttack, int luck, Item item) { //add dialogue stuff?
-        super(name, maxHealth, meleeAttack, rangedAttack, luck, item);
-        hostile = false;
-        // Dialogue stuff??
+    private static class Builder2 extends Builder<Builder2> {
+        @Override
+        protected Builder2 self() {
+            return this;
+        }
     }
 
-    NPC(String name, int maxHealth, int meleeAttack, int rangedAttack, int luck, Item item1, Item item2) {
-        super(name, maxHealth, meleeAttack, rangedAttack, luck, item1, item2);
-        hostile = false;
+    public static Builder<?> builder() {
+        return new Builder2();
+    }
+
+    protected NPC(Builder<?> builder) {
+        super(builder);
+        this.xPos = builder.xPos;
+        this.yPos = builder.yPos;
     }
 }

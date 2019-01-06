@@ -1,59 +1,103 @@
 package main;
 
-class Item {
-    String name;
-    int meleeDamage;
-    int rangedDamage;
-    int armor;
-    int luck;
-    boolean isWeapon = false;
-    boolean isArmor = false;
+public class Item {
 
-    // Item Text
-    String pickup;
+    // ITEM STATISTICS
+    private String name;
+    private int luck;
+    private int value;
 
-    //Constructors
+    // ITEM TEXT
+    private String description;
 
-    Item() {
-        name = "itemName";
-        meleeDamage = 0;
-        rangedDamage = 0;
-        armor = 0;
-        luck = 0;
+    // METHODS
+    public String getName() {
+        return this.name;
     }
 
-    Item(String name) {
-        this();
+    public void setName(String name) {
         this.name = name;
     }
 
-    Item(String name, String pickup) {
-        this(name);
-        this.pickup = pickup;
+    public int getLuck() {
+        return this.luck;
     }
 
-    Item(String name, int armor, int luck) {
-        this(name);
-        this.armor = armor;
+    public void setLuck(int luck) {
         this.luck = luck;
-        this.isArmor = true;
     }
 
-    Item(String name, int armor, int luck, String pickup) {
-        this(name, armor, luck);
-        this.pickup = pickup;
+    public int getValue() {
+        return this.value;
     }
 
-    Item(String name, int meleeDamage, int rangedDamage, int luck) {
-        this(name);
-        this.meleeDamage = meleeDamage;
-        this.rangedDamage = rangedDamage;
-        this.luck = luck;
-        this.isWeapon = true;
+    public void setValue(int value) {
+        this.value = value;
     }
 
-    Item(String name, int meleeDamage, int rangedDamage, int luck, String pickup) {
-        this(name, meleeDamage, rangedDamage, luck);
-        this.pickup = pickup;
+    public String getDescription() {
+        return this.description;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    // BUILDER
+    public static abstract class Builder<T extends Builder<T>> {
+
+        // ITEM STATISTICS
+        private String name = "itemName";
+        private int luck = 0;
+        private int value = 0;
+
+        // ITEM TEXT
+        private String description;
+
+        protected abstract T self();
+
+        public T name(String name) {
+            this.name = name;
+            return self();
+        }
+
+        public T luck(int luck) {
+            this.luck = luck;
+            return self();
+        }
+
+        public T value(int value) {
+            this.value = value;
+            return self();
+        }
+
+        public T description(String description) {
+            this.description = description;
+            return self();
+        }
+
+        public Item build() {
+            return new Item(this);
+        }
+
+    }
+
+    private static class Builder2 extends Builder<Builder2> {
+        @Override
+        protected Builder2 self() {
+            return this;
+        }
+    }
+
+    public static Builder<?> builder() {
+        return new Builder2();
+    }
+
+    // SOLE CONSTRUCTOR
+    protected Item(Builder<?> builder) {
+        this.name = builder.name;
+        this.luck = builder.luck;
+        this.value = value;
+    }
+
 }
