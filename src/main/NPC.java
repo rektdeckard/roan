@@ -7,16 +7,25 @@ public class NPC extends Creature {
     // NPC Location
     private int xPos;
     private int yPos;
+    private int zPos;
 
     // Constructors
     // BUILD
     public static abstract class Builder<T extends Builder<T>> extends Creature.Builder<T> {
-        private int xPos = 5;
-        private int yPos = 5;
+        private int xPos = 2;
+        private int yPos = 4;
+        private int zPos = 6;
 
         public T position(int xPos, int yPos) {
             this.xPos = xPos;
             this. yPos = yPos;
+            return self();
+        }
+
+        public T position(int xPos, int yPos, int zPos) {
+            this.xPos = xPos;
+            this. yPos = yPos;
+            this.zPos = zPos;
             return self();
         }
 
@@ -40,5 +49,6 @@ public class NPC extends Creature {
         super(builder);
         this.xPos = builder.xPos;
         this.yPos = builder.yPos;
+        this.zPos = builder.zPos;
     }
 }

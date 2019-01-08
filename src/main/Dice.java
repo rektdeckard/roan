@@ -2,11 +2,11 @@ package main;
 
 import java.util.Random;
 
-class Dice {
+public class Dice {
 
-    private final Random random = new Random();
+    private static final Random random = new Random();
 
-    int roll(int max) {
+    public static int roll(int max) {
         return 1 + random.nextInt(max);
     }
 

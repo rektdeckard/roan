@@ -15,7 +15,7 @@ public class Creature {
     private boolean hostile;
 
     // INVENTORY
-    private Map<String, Item> inventory = new HashMap<>();
+    private Map<String, Item> inventory;
     private Weapon equippedWeapon;
     private Armor equippedArmor;
 
@@ -87,19 +87,26 @@ public class Creature {
         this.health = health;
     }
 
-    public void damage(int n) {
+    public boolean damage(int n) {
+        this.health -= n;
+        if (health <= 0) {
+            System.out.println(this.name + " has fallen.");
+            return false;
+        } else {
+            System.out.println(this.name + " was injured.");
+            return true;
+        }
+    }
+
+    public void heal(int n) {
         this.health += n;
         if (this.health > this.maxHealth) {
             this.health = this.maxHealth;
             System.out.println(this.name + " looks refreshed.");
         } else if (n > 0) {
             System.out.println(this.name + " looks stronger.");
-        } else if (health <= 0) {
-            System.out.println(this.name + " has fallen.");
-            //TODO kill method
-        } else {
-            System.out.println(this.name + " was injured.");
         }
+        // TODO: 1/7/2019 potions??
     }
 
     public int getMeleeAttack() {
@@ -165,7 +172,7 @@ public class Creature {
         this.inventory.remove(item.getName());
     }
 
-    public void removeInventory() {
+    public void clearInventory() {
         this.inventory.clear();
     }
 
@@ -175,11 +182,11 @@ public class Creature {
         return inventory;
     }
 
-    public Item getEquippedWeapon() {
+    public Weapon getEquippedWeapon() {
         return this.equippedWeapon;
     }
 
-    public Item getEquippedArmor() {
+    public Armor getEquippedArmor() {
         return this.equippedArmor;
     }
 
@@ -201,12 +208,13 @@ public class Creature {
         private Armor equippedArmor;
 
         // CREATURE TEXT
-        private String description = "A fearsome beast appeared.";
+        private String description;
 
         protected abstract T self();
 
         public T name(String name) {
             this.name = name;
+            this.description = "A " + this.name + " looks ready to kill you.";
             return self();
         }
 
@@ -288,6 +296,7 @@ public class Creature {
         this.meleeAttack = builder.meleeAttack;
         this.rangedAttack = builder.rangedAttack;
         this.luck = builder.luck;
+        this.hostile = builder.hostile;
         this.description = builder.description;
         this.inventory = builder.inventory;
         this.equippedWeapon = builder.equippedWeapon;

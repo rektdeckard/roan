@@ -10,14 +10,16 @@ public class Scene {
     private String name;
     private boolean examine;
     private boolean use;
-    private boolean climb;
 
     // ALLOWED DIRECTIONS
     private EnumSet<Direction> allowed;
+    private EnumSet<Vertical> allowedVertical;
+    private Direction climbDirection;
+    private Vertical climbVertical;
 
     // SCENE INVENTORY
-    private Map<String, Item> inventory = new HashMap<>();
-    private Map<String, Creature> creatures = new HashMap<>();
+    private Map<String, Item> inventory;
+    private Map<String, Creature> creatures;
 
     // SCENE TEXT
     private String description;
@@ -29,10 +31,15 @@ public class Scene {
     //TODO add hazards
 
     // METHODS
-    void use() {
+    void activity() {
         if (this.use) {
             //TODO Add use() functionality
         }
+    }
+
+    public void disposeOf(Creature creature) {
+        this.putInventory(creature.getInventory());
+        this.removeCreature(creature);
     }
 
     // SETTERS & GETTERS
@@ -61,12 +68,20 @@ public class Scene {
         this.use = use;
     }
 
-    public boolean canClimb() {
-        return this.climb;
+    public Direction getClimbDirection() {
+        return this.climbDirection;
     }
 
-    public void setClimb(boolean climb) {
-        this.climb = climb;
+    public void setClimbDirection(Direction climbDirection) {
+        this.climbDirection = climbDirection;
+    }
+
+    public Vertical getClimbVertical() {
+        return this.climbVertical;
+    }
+
+    public void setClimbVertical(Vertical climbVertical) {
+        this.climbVertical = climbVertical;
     }
 
     public EnumSet<Direction> getAllowed() {
@@ -85,6 +100,14 @@ public class Scene {
         this.allowed.removeAll(disallowed);
     }
 
+    public EnumSet<Vertical> getVertical() {
+        return allowedVertical;
+    }
+
+    public void setVertical(EnumSet<Vertical> verticals) {
+        this.allowedVertical = verticals;
+    }
+
     public Map<String, Item> getInventory() {
         return this.inventory;
     }
@@ -101,14 +124,8 @@ public class Scene {
         this.inventory.remove(item.getName());
     }
 
-    public void removeInventory() {
+    public void clearInventory() {
         this.inventory.clear();
-    }
-
-    public Map<String, Item> takeInventory() {
-        Map<String, Item> inventory = this.inventory;
-        this.inventory.clear();
-        return inventory;
     }
 
     public Map<String, Creature> getCreatures() {
@@ -161,10 +178,12 @@ public class Scene {
         private String name = "Somewhere in Celedan";
         private boolean examine = true;
         private boolean use;
-        private boolean climb;
 
         // ALLOWED DIRECTIONS
         private EnumSet<Direction> allowed = EnumSet.allOf(Direction.class);
+        private EnumSet<Vertical> allowedVertical = EnumSet.noneOf(Vertical.class);
+        private Direction climbDirection = null;
+        private Vertical climbVertical = null;
 
         // SCENE INVENTORY
         private Map<String, Item> inventory = new HashMap<>();
@@ -172,7 +191,7 @@ public class Scene {
 
         // SCENE TEXT
         String description = "You shouldn't be here.";
-        String detail = "There is nothing to see here.";
+        String detail = "There is nothing of interest here.";
         String succeed = "Well done!";
         String fail = "That didn't work.";
 
@@ -194,8 +213,9 @@ public class Scene {
             return self();
         }
 
-        public T climb(boolean climb) {
-            this.climb = climb;
+        public T climb(Direction direction, Vertical vertical) {
+            this.climbDirection = direction;
+            this.climbVertical = vertical;
             return self();
         }
 
@@ -206,6 +226,11 @@ public class Scene {
 
         public T disallowed(EnumSet<Direction> disallowed) {
             this.allowed = EnumSet.complementOf(disallowed);
+            return self();
+        }
+
+        public T vertical(EnumSet<Vertical> verticals) {
+            this.allowedVertical = verticals;
             return self();
         }
 
@@ -261,8 +286,10 @@ public class Scene {
         this.name = builder.name;
         this.examine = builder.examine;
         this.use = builder.use;
-        this.climb = builder.climb;
         this.allowed = builder.allowed;
+        this.allowedVertical = builder.allowedVertical;
+        this.climbDirection = builder.climbDirection;
+        this.climbVertical = builder.climbVertical;
         this.description = builder.description;
         this.detail = builder.detail;
         this.succeed = builder.succeed;

@@ -5,6 +5,7 @@ public class Player extends Creature {
     // PLAYER LOCATION
     private int xPos;
     private int yPos;
+    private int zPos;
 
     // METHODS
 
@@ -55,22 +56,29 @@ public class Player extends Creature {
     }
 
     @Override
-    public void setHealth(int n) {
-        n += super.getHealth();
-        if (n > super.getMaxHealth()) {
-            super.setHealth(super.getMaxHealth());
-            System.out.println("You feel refreshed.");
-        } else if (n <= 0) {
+    public boolean damage(int n) {
+        this.setHealth(this.getHealth() - n);
+        if (this.getHealth() < 0) {
             System.out.println("Your vision grows faint as the world slips away. You are dead.");
-            System.exit(0);
-        } else if (n > super.getHealth()) {
-            System.out.println("You feel a bit better...");
+            return false;
         } else {
-            super.setHealth(n);
-            System.out.println("That hurt.");
+            System.out.println("You've been injured.");
+            return true;
         }
     }
 
+    @Override
+    public void heal(int n) {
+        this.setHealth(this.getHealth() + n);
+        if (this.getHealth() > this.getMaxHealth()) {
+            this.setHealth(this.getMaxHealth());
+            System.out.println("You feel refreshed.");
+        } else {
+            System.out.println("You feel stronger.");
+        }
+    }
+
+    // GETTERS & SETTERS
     public int getXPos() {
         return this.xPos;
     }
@@ -79,18 +87,40 @@ public class Player extends Creature {
         return this.yPos;
     }
 
+    public int getZPos() {
+        return this.zPos;
+    }
+
     public void setPos(int xPos, int yPos) {
         this.xPos = xPos;
         this.yPos = yPos;
+    }
+
+    public void setPos(int xPos, int yPos, int zPos) {
+        setPos(xPos, yPos);
+        this.zPos = zPos;
     }
 
     // BUILD
     public static abstract class Builder<T extends Builder<T>> extends Creature.Builder<T> {
 
         // PLAYER STATISTICS
-        private int xPos = 5;
-        private int yPos = 5;
+        private int xPos = 4;
+        private int yPos = 4;
+        private int zPos = 5;
 
+        public T setPos(int xPos, int yPos) {
+            this.xPos = xPos;
+            this.yPos = yPos;
+            return self();
+        }
+
+        public T setPos(int xPos, int yPos, int zPos) {
+            this.xPos = xPos;
+            this.yPos = yPos;
+            this.zPos = zPos;
+            return self();
+        }
 
         public Player build() {
             return new Player(this);
@@ -112,6 +142,7 @@ public class Player extends Creature {
         super(builder);
         this.xPos = builder.xPos;
         this.yPos = builder.yPos;
+        this.zPos = builder.zPos;
     }
 
 }
