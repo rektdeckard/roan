@@ -1,0 +1,23 @@
+<idea-plugin>
+    <id>roan</id>
+    <name>not sure</name>
+    <vendor email="friedtm@gmail.com" url="https://github.com/rektdeckard">rektdeckard</vendor>
+
+    <description><![CDATA[
+    Not really sure what this thing is supposed to do...<br>
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+</idea-plugin>

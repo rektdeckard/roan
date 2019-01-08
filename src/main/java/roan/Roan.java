@@ -1,4 +1,4 @@
-package main;
+package roan;
 
 import java.util.Scanner;
 
@@ -87,7 +87,7 @@ public class Roan {
                 done = true;
                 quit();
             } else {
-                System.out.println("That cannot be done.");
+                System.out.println("That can't be done.");
             }
         }
         return true;
@@ -193,7 +193,7 @@ public class Roan {
             // Player attack phase
             System.out.print("# ");
             String input = scanner.nextLine().toLowerCase();
-            // INSTAKILL for debugging
+            // TODO remove instakill when releasing
             if (input.contains("kill")) {
                 for (Creature combatant : currentScene.getCreatures().values()) {
                     if (input.contains(combatant.getName().toLowerCase()) || (currentScene.getCreatures().size() == 1)) {
@@ -243,15 +243,15 @@ public class Roan {
     private static boolean attackPlayer(Creature combatant, Player player) {
         if (combatant.getEquippedWeapon() != null) {
             System.out.println(combatant.getName() + " attacks.");
-                if (player.getEquippedArmor() != null) {
-                    if (Dice.roll(20) + combatant.getMeleeAttack() + combatant.getLuck() > player.getEquippedArmor().getArmor() + player.getLuck()) {
-                        return player.damage(Dice.roll(combatant.getEquippedWeapon().getDamage()));
-                    } else {
-                        System.out.println("The " + combatant.getName() + " missed.");
-                    }
-                } else {
+            if (player.getEquippedArmor() != null) {
+                if (Dice.roll(20) + combatant.getMeleeAttack() + combatant.getLuck() > player.getEquippedArmor().getArmor() + player.getLuck()) {
                     return player.damage(Dice.roll(combatant.getEquippedWeapon().getDamage()));
+                } else {
+                    System.out.println("The " + combatant.getName() + " missed.");
                 }
+            } else {
+                return player.damage(Dice.roll(combatant.getEquippedWeapon().getDamage()));
+            }
         } else {
             System.out.println(combatant.getName() + " can't attack.");
         }
@@ -352,8 +352,7 @@ public class Roan {
             if (player.getInventory().containsKey("Rope")) {
                 if (Dice.roll(20) + player.getLuck() >= 10) {
                     System.out.println(currentScene.getSucceed());
-                    go(currentScene.getClimbDirection(), currentScene.getClimbVertical());
-                    return true;
+                    return go(currentScene.getClimbDirection(), currentScene.getClimbVertical());
                 } else {
                     System.out.println(currentScene.getFail());
                     player.damage(Dice.roll(20));
