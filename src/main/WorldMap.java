@@ -38,7 +38,7 @@ public class WorldMap {
         // MAP DATA
         String rockFace = "Rock Face";
         String kerosiEncampment = "Kerosi Encampment";
-        String mesa = "The Elakarra Mesa";
+        String mesa = "The Alkhara Mesa";
         String forestEdge = "Forest's Edge";
         String murkyWood = "The Murky Wood";
         String plain = "The Plain";
@@ -56,7 +56,7 @@ public class WorldMap {
             scene[3][5][d] = Scene.builder().name(rockFace).disallowed(EnumSet.range(Direction.SW, Direction.NW)).climb(Direction.W, Vertical.UP).description(scene[4][5][d].getDescription()).succeed(scene[4][5][d].getSucceed()).fail(scene[4][5][d].getFail()).build();
 
 
-        // ELAKARRA MESA
+        // ALKHARA MESA
             scene[2][4][6] = Scene.builder().name(kerosiEncampment).disallowed(EnumSet.range(Direction.NE, Direction.SE)).climb(Direction.E, Vertical.DOWN).use(true).description("Spread out before you is an encampment nomadic peoples. Several dozen animal-hide tents dot the landscape, the smoke from cooking fires rises into the open sky like tendrils. Men and women are at work repairing clothes, sharpening tools, tending to young children.").build();
             scene[2][4][6].putCreature(NPC.builder().name("Stranger").maxHealth(100).meleeAttack(6).luck(10).hostile(false).position(2,4).equip(Weapon.builder().name("Fellstaff").damage(16).luck(1).description("The staff is gnarled and heavy, but smooth from use. It seems to have been hewn from three tree limbs that grew together over time. As you pick it up, it vibrates angrily at your touch, then grows calm.").build()).equip(Armor.builder().name("Bramble Guard").armor(16).luck(1).description("You've never seen a set of armor like this. Its interlocking plates are hard and polished, but they seem to have been grown together rather than forged.").build()).build());
 
