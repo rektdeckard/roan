@@ -1,28 +1,28 @@
-package main;
+package roan;
 
-public class Weapon extends Item {
-    private int damage;
+public class Armor extends Item {
+    private int armor;
 
     // GETTERS & SETTERS
-    public int getDamage() {
-        return this.damage;
+    public int getArmor() {
+        return this.armor;
     }
 
-    public void setDamage(int damage) {
-        this.damage = damage;
+    public void setArmor(int armor) {
+        this.armor = armor;
     }
 
     // BUILD
     public static abstract class Builder<T extends Builder<T>> extends Item.Builder<T> {
-        private int damage = 0;
+        private int armor = 0;
 
-        public T damage(int damage) {
-            this.damage = damage;
+        public T armor(int armor) {
+            this.armor = armor;
             return self();
         }
 
-        public Weapon build() {
-            return new Weapon(this);
+        public Armor build() {
+            return new Armor(this);
         }
     }
 
@@ -37,11 +37,9 @@ public class Weapon extends Item {
         return new Builder2();
     }
 
-    private Weapon(Builder<?> builder) {
+    private Armor(Builder<?> builder) {
         super(builder);
-        this.damage = builder.damage;
+        this.armor = builder.armor;
     }
 
 }
-
-

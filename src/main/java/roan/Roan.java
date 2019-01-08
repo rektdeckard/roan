@@ -1,4 +1,4 @@
-package main;
+package roan;
 
 import java.util.Scanner;
 
@@ -243,15 +243,15 @@ public class Roan {
     private static boolean attackPlayer(Creature combatant, Player player) {
         if (combatant.getEquippedWeapon() != null) {
             System.out.println(combatant.getName() + " attacks.");
-                if (player.getEquippedArmor() != null) {
-                    if (Dice.roll(20) + combatant.getMeleeAttack() + combatant.getLuck() > player.getEquippedArmor().getArmor() + player.getLuck()) {
-                        return player.damage(Dice.roll(combatant.getEquippedWeapon().getDamage()));
-                    } else {
-                        System.out.println("The " + combatant.getName() + " missed.");
-                    }
-                } else {
+            if (player.getEquippedArmor() != null) {
+                if (Dice.roll(20) + combatant.getMeleeAttack() + combatant.getLuck() > player.getEquippedArmor().getArmor() + player.getLuck()) {
                     return player.damage(Dice.roll(combatant.getEquippedWeapon().getDamage()));
+                } else {
+                    System.out.println("The " + combatant.getName() + " missed.");
                 }
+            } else {
+                return player.damage(Dice.roll(combatant.getEquippedWeapon().getDamage()));
+            }
         } else {
             System.out.println(combatant.getName() + " can't attack.");
         }
