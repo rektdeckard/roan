@@ -14,7 +14,7 @@ public class Weapon extends Item {
 
     // BUILD
     public static abstract class Builder<T extends Builder<T>> extends Item.Builder<T> {
-        private int damage = 0;
+        private int damage = 5;
 
         public T damage(int damage) {
             this.damage = damage;

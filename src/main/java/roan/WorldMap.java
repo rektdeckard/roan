@@ -51,9 +51,9 @@ public class WorldMap {
 
         // ROCK FACE
         scene[3][4][d] = Scene.builder().name(rockFace).disallowed(EnumSet.range(Direction.SW, Direction.NW)).climb(Direction.W, Vertical.UP).description("As you approach the rock face, you see its surface is pockmarked with small holes that would make perfect climbing holds. The cliff is sheer, but you think you could manage the climb. Looking up, you spot the face of a young girl watching you from the top of the bluff. Her face is streaked with dark paint, and as your eyes meet she is startled and withdraws quickly from view.").succeed("You successfully scale the sandy cliff, and pulling yourself over the lip you emerge onto a wide plateau.").fail("Part-way up the sandy cliff, you lose your grip and fall into the void. For a brief second you hear the faint sound of music, then you hit the ground with a hard crack.").build();
-        scene[3][3][d] = Scene.builder().name(rockFace).disallowed(EnumSet.range(Direction.SE, Direction.NW)).climb(Direction.W, Vertical.UP).description(scene[4][5][d].getDescription()).succeed(scene[4][5][d].getSucceed()).fail(scene[4][5][d].getFail()).build();
-        scene[4][3][d] = Scene.builder().name(rockFace).disallowed(EnumSet.range(Direction.E, Direction.SW)).climb(Direction.S, Vertical.UP).description(scene[4][5][d].getDescription()).succeed(scene[4][5][d].getSucceed()).fail(scene[4][5][d].getFail()).build();
-        scene[3][5][d] = Scene.builder().name(rockFace).disallowed(EnumSet.range(Direction.SW, Direction.NW)).climb(Direction.W, Vertical.UP).description(scene[4][5][d].getDescription()).succeed(scene[4][5][d].getSucceed()).fail(scene[4][5][d].getFail()).build();
+        scene[3][3][d] = Scene.builder().name(rockFace).disallowed(EnumSet.range(Direction.SE, Direction.NW)).climb(Direction.W, Vertical.UP).description(scene[3][4][d].getDescription()).succeed(scene[3][4][d].getSucceed()).fail(scene[3][4][d].getFail()).build();
+        scene[4][3][d] = Scene.builder().name(rockFace).disallowed(EnumSet.range(Direction.E, Direction.SW)).climb(Direction.S, Vertical.UP).description(scene[3][4][d].getDescription()).succeed(scene[3][4][d].getSucceed()).fail(scene[3][4][d].getFail()).build();
+        scene[3][5][d] = Scene.builder().name(rockFace).disallowed(EnumSet.range(Direction.SW, Direction.NW)).climb(Direction.W, Vertical.UP).description(scene[3][4][d].getDescription()).succeed(scene[3][4][d].getSucceed()).fail(scene[3][4][d].getFail()).build();
 
 
         // ALKHARA MESA
@@ -67,7 +67,7 @@ public class WorldMap {
 
 
         // THE MURKY WOOD
-        scene[6][4][d] = Scene.builder().name(murkyWood).allowed(EnumSet.of(Direction.W, Direction.NW)).description("Creeping into the murky wood, you feel the damp clinging to your tunic. Eerie sounds from creatures you'd rather not meet come from the depths. The trees grow denser as you go, all but blotting out the daylight. Strange flora curl around the roots of the massive trees, and more than once you think you see them moving at the edge of your vision. They seem to be trying to block your path.").detail("It seems these plants are trying to dissuade you from entering any deeper. They are closing in from all around, and you realize that your only way forward might be back the way you came...If you're lucky.").build();
+        scene[6][4][d] = Scene.builder().name(murkyWood).allowed(of(Direction.W, Direction.NW)).description("Creeping into the murky wood, you feel the damp clinging to your tunic. Eerie sounds from creatures you'd rather not meet come from the depths. The trees grow denser as you go, all but blotting out the daylight. Strange flora curl around the roots of the massive trees, and more than once you think you see them moving at the edge of your vision. They seem to be trying to block your path.").detail("It seems these plants are trying to dissuade you from entering any deeper. They are closing in from all around, and you realize that your only way forward might be back the way you came...If you're lucky.").inventory(Weapon.builder().name(Names.randomWeaponAdjective() + " " + Names.randomWeaponNoun()).build()).build();
 
 
         // THE PLAIN
