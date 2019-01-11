@@ -47,7 +47,7 @@ public class Item {
     public static abstract class Builder<T extends Builder<T>> {
 
         // ITEM STATISTICS
-        private String name = "itemName";
+        private String name;
         private int luck = 0;
         private int value = 0;
 

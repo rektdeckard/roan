@@ -3,6 +3,9 @@ package roan;
 import java.util.HashMap;
 import java.util.Map;
 
+import static roan.Roan.printGreen;
+import static roan.Roan.printRed;
+
 public class Creature {
 
     // CREATURE STATISTICS
@@ -90,10 +93,10 @@ public class Creature {
     public boolean damage(int n) {
         this.health -= n;
         if (health <= 0) {
-            System.out.println(this.name + " has fallen.");
+            printRed(this.name + " has fallen.");
             return false;
         } else {
-            System.out.println(this.name + " was injured.");
+            printRed(this.name + " was injured.");
             return true;
         }
     }
@@ -102,9 +105,9 @@ public class Creature {
         this.health += n;
         if (this.health > this.maxHealth) {
             this.health = this.maxHealth;
-            System.out.println(this.name + " looks refreshed.");
+            printGreen(this.name + " looks refreshed.");
         } else if (n > 0) {
-            System.out.println(this.name + " looks stronger.");
+            printGreen(this.name + " looks stronger.");
         }
         // TODO: 1/7/2019 potions??
     }

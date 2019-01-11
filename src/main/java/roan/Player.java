@@ -1,5 +1,8 @@
 package roan;
 
+import static roan.Roan.printGreen;
+import static roan.Roan.printRed;
+
 public class Player extends Creature {
 
     // PLAYER LOCATION
@@ -55,14 +58,18 @@ public class Player extends Creature {
         }
     }
 
+    public void rest() {
+        this.heal(Dice.roll(this.getHealth()) + this.getLuck());
+    }
+
     @Override
     public boolean damage(int n) {
         this.setHealth(this.getHealth() - n);
         if (this.getHealth() < 0) {
-            System.out.println("Your vision grows faint as the world slips away. You are dead.");
+            printRed("Your vision grows faint as the world slips away. You are dead.");
             return false;
         } else {
-            System.out.println("You've been injured.");
+            printRed("You've been injured.");
             return true;
         }
     }
@@ -72,9 +79,9 @@ public class Player extends Creature {
         this.setHealth(this.getHealth() + n);
         if (this.getHealth() > this.getMaxHealth()) {
             this.setHealth(this.getMaxHealth());
-            System.out.println("You feel refreshed.");
+            printGreen("You feel refreshed.");
         } else {
-            System.out.println("You feel stronger.");
+            printGreen("You feel stronger.");
         }
     }
 

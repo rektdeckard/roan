@@ -73,6 +73,8 @@ public class Roan {
             } else if (input.contains("attack") || input.contains("ambush")) {
                 // Creature name parsing done in ambush() function
                 ambush(input);
+            } else if (input.equals("rest")) {
+                player.rest();
             } else if (input.contains("inventory") || input.contains("items") || input.equals("i") || input.equals("inv")) {
                 inventory();
             } else if (input.contains("unequip")) {
@@ -100,30 +102,28 @@ public class Roan {
         int y = player.getYPos();
         if (currentScene.getAllowed().contains(direction)) {
             if (direction == Direction.N) {
-                currentScene = map.getScene(x, y + 1);
-                player.setPos(x, y + 1);
+                y++;
             } else if (direction == Direction.NE) {
-                currentScene = map.getScene(x + 1, y + 1);
-                player.setPos(x + 1, y + 1);
+                x++;
+                y++;
             } else if (direction == Direction.E) {
-                currentScene = map.getScene(x + 1, y);
-                player.setPos(x + 1, y);
+                x++;
             } else if (direction == Direction.SE) {
-                currentScene = map.getScene(x + 1, y - 1);
-                player.setPos(x + 1, y - 1);
+                x++;
+                y--;
             } else if (direction == Direction.S) {
-                currentScene = map.getScene(x, y - 1);
-                player.setPos(x, y - 1);
+                y--;
             } else if (direction == Direction.SW) {
-                currentScene = map.getScene(x - 1, y - 1);
-                player.setPos(x - 1, y - 1);
+                x--;
+                y--;
             } else if (direction == Direction.W) {
-                currentScene = map.getScene(x - 1, y);
-                player.setPos(x - 1, y);
+                x--;
             } else if (direction == Direction.NW) {
-                currentScene = map.getScene(x - 1, y + 1);
-                player.setPos(x - 1, y + 1);
+                x--;
+                y++;
             }
+            player.setPos(x, y);
+            currentScene = map.getScene(x, y);
             return true;
         } else {
             System.out.println("That can't be done.");
@@ -142,30 +142,28 @@ public class Roan {
                 z--;
             }
             if (direction == Direction.N) {
-                currentScene = map.getScene(x, y + 1, z);
-                player.setPos(x, y + 1, z);
+                y++;
             } else if (direction == Direction.NE) {
-                currentScene = map.getScene(x + 1, y + 1, z);
-                player.setPos(x + 1, y + 1, z);
+                x++;
+                y++;
             } else if (direction == Direction.E) {
-                currentScene = map.getScene(x + 1, y, z);
-                player.setPos(x + 1, y, z);
+                x++;
             } else if (direction == Direction.SE) {
-                currentScene = map.getScene(x + 1, y - 1, z);
-                player.setPos(x + 1, y - 1, z);
+                x++;
+                y--;
             } else if (direction == Direction.S) {
-                currentScene = map.getScene(x, y - 1, z);
-                player.setPos(x, y - 1, z);
+                y--;
             } else if (direction == Direction.SW) {
-                currentScene = map.getScene(x - 1, y - 1, z);
-                player.setPos(x - 1, y - 1, z);
+                x--;
+                y--;
             } else if (direction == Direction.W) {
-                currentScene = map.getScene(x - 1, y, z);
-                player.setPos(x - 1, y, z);
+                x--;
             } else if (direction == Direction.NW) {
-                currentScene = map.getScene(x - 1, y + 1, z);
-                player.setPos(x - 1, y + 1, z);
+                x--;
+                y++;
             }
+            player.setPos(x, y, z);
+            currentScene = map.getScene(x, y, z);
             return true;
         } else {
             System.out.println("That can't be done.");
@@ -181,6 +179,7 @@ public class Roan {
         // Loop while creatures are alive and has not fled. Return true if player still alive, else false.
         boolean fighting = !currentScene.getCreatures().isEmpty();
         while (fighting) {
+            // TODO order combatants based on luck and dice roll
             // Enemy attack phase
             for (Creature combatant : currentScene.getCreatures().values()) {
                 if (combatant.isHostile()) {
@@ -326,8 +325,9 @@ public class Roan {
     private static boolean take(String input) {
         if (currentScene.getInventory().isEmpty()) {
             System.out.println("There is nothing here.");
-        } else if (input.contains("all") || input.equals("t")) {
-            System.out.println("Received: " + currentScene.getInventory().keySet());
+        } else if (input.contains("all") || input.equals("t") || input.equals("take")) {
+            System.out.print("Received: ");
+            printYellow(currentScene.getInventory().keySet().toString());
             player.putInventory(currentScene.getInventory());
             currentScene.clearInventory();
         } else {
@@ -336,7 +336,8 @@ public class Roan {
                 if (input.contains(sceneItem.getName().toLowerCase())) {
                     hasItem = true;
                     player.putInventory(sceneItem);
-                    System.out.println("Received: [" + sceneItem.getName() + "]");
+                    System.out.println("Received: ");
+                    printYellow("[" + sceneItem.getName() + "]");
                     currentScene.removeInventory(sceneItem);
                 }
             }
@@ -392,4 +393,24 @@ public class Roan {
         System.exit(0);
     }
 
+    // PRINT COLORS
+    public static void printRed(String string) {
+        System.out.println((char)27 + "[31m" + string + (char)27 + "[39;49m");
+    }
+
+    public static void printYellow(String string) {
+        System.out.println((char)27 + "[33m" + string + (char)27 + "[39;49m");
+    }
+
+    public static void printGreen(String string) {
+        System.out.println((char)27 + "[32m" + string + (char)27 + "[39;49m");
+    }
+
+    public static void printBlue(String string) {
+        System.out.println((char)27 + "[34m" + string + (char)27 + "[39;49m");
+    }
+
+    public static void printMagenta(String string) {
+        System.out.println((char)27 + "[35m" + string + (char)27 + "[39;49m");
+    }
 }

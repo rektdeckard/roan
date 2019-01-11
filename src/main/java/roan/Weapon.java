@@ -21,6 +21,58 @@ public class Weapon extends Item {
             return self();
         }
 
+        public T random() {
+            WeaponPrefix prefix = WeaponPrefix.randomPrefix();
+            WeaponSuffix suffix = WeaponSuffix.randomSuffix();
+            String name = prefix.name + " " + suffix.name;
+            int damage = prefix.damage + suffix.damage;
+            int luck = prefix.luck + suffix.luck;
+            int value = prefix.value + suffix.value;
+            this.name(name);
+            this.damage(damage);
+            this.luck(luck);
+            this.value(value);
+            return self();
+        }
+
+        public T random(WeaponPrefix prefix) {
+            WeaponSuffix suffix = WeaponSuffix.randomSuffix();
+            String name = prefix.name + " " + suffix.name;
+            int damage = prefix.damage + suffix.damage;
+            int luck = prefix.luck + suffix.luck;
+            int value = prefix.value + suffix.value;
+            this.name(name);
+            this.damage(damage);
+            this.luck(luck);
+            this.value(value);
+            return self();
+        }
+
+        public T random(WeaponSuffix suffix) {
+            WeaponPrefix prefix = WeaponPrefix.randomPrefix();
+            String name = prefix.name + " " + suffix.name;
+            int damage = prefix.damage + suffix.damage;
+            int luck = prefix.luck + suffix.luck;
+            int value = prefix.value + suffix.value;
+            this.name(name);
+            this.damage(damage);
+            this.luck(luck);
+            this.value(value);
+            return self();
+        }
+
+        public T generic(WeaponSuffix suffix) {
+            String name = suffix.name;
+            int damage = suffix.damage;
+            int luck = suffix.luck;
+            int value = suffix.value;
+            this.name(name);
+            this.damage(damage);
+            this.luck(luck);
+            this.value(value);
+            return self();
+        }
+
         public Weapon build() {
             return new Weapon(this);
         }
