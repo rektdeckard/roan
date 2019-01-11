@@ -3,7 +3,7 @@
 ## Installing Roan
 1. Download: `git clone https://github.com/rektdeckard/roan` or download the repository.
 2. Compile: `javac Roan.java`
-3. Run: `java Roan`
+3. Run: `java roan.Roan`
 
 ## Gameplay
 One of the core ideas of the game is discovery. At the start of the game you are told nothing of what you can and cannot do, and are forced to figure out, by trial-and-error, what the possible commands, player actions and abilities are. Your own discovery mirrors that of your character, who is lost in an unfamiliar world with no explanation. Roan is a permadeath game that is unforgiving, but not unfair.
