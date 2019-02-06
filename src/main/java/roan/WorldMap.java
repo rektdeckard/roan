@@ -7,19 +7,45 @@ import static java.util.EnumSet.of;
 public class WorldMap {
 
     // DECLARATIONS
-    private static final int mapWidth = 9;
-    private static final int mapHeight = 9;
+    private static final int mapWidth = 27;
+    private static final int mapHeight = 27;
     private static final int mapDepth = 9;
     private static final int d = 5;
     private Scene[][][] scene;
 
     // GETTERS
-    public Scene getScene(int x, int y) {
-        return scene[x][y][d];
+    public Scene getScene(int x, int y) throws ArrayIndexOutOfBoundsException {
+        try {
+            return scene[x][y][d];
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("I haven't made that tile yet :)");
+            return null;
+        }
     }
 
-    public Scene getScene(int x, int y, int z) {
-        return scene[x][y][z];
+    public Scene getScene(Player player, Scene currentScene, int x, int y) throws ArrayIndexOutOfBoundsException {
+        try {
+            Scene nextScene = scene[x][y][d];
+            player.setPos(x, y);
+            return nextScene;
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("I haven't made that tile yet :)");
+            return currentScene;
+        }
+    }
+
+    public Scene getScene(Player player, Scene currentScene, int x, int y, int z) throws ArrayIndexOutOfBoundsException {
+        try {
+            Scene nextScene = scene[x][y][z];
+            player.setPos(x, y, z);
+            return nextScene;
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("I haven't made that tile yet :)");
+            return currentScene;
+        }
     }
 
     // CONSTRUCTOR
@@ -67,7 +93,7 @@ public class WorldMap {
 
 
         // THE MURKY WOOD
-        scene[6][4][d] = Scene.builder().name(murkyWood).allowed(of(Direction.W, Direction.NW)).description("Creeping into the murky wood, you feel the damp clinging to your tunic. Eerie sounds from creatures you'd rather not meet come from the depths. The trees grow denser as you go, all but blotting out the daylight. Strange flora curl around the roots of the massive trees, and more than once you think you see them moving at the edge of your vision. They seem to be trying to block your path.").detail("It seems these plants are trying to dissuade you from entering any deeper. They are closing in from all around, and you realize that your only way forward might be back the way you came...If you're lucky.").inventory(Weapon.builder().random().build()).build(); // TODO better random method
+        scene[6][4][d] = Scene.builder().name(murkyWood).allowed(of(Direction.W, Direction.NW)).description("Creeping into the murky wood, you feel the damp clinging to your tunic. Eerie sounds from creatures you'd rather not meet come from the depths. The trees grow denser as you go, all but blotting out the daylight. Strange flora curl around the roots of the massive trees, and more than once you think you see them moving at the edge of your vision. They seem to be trying to block your path.").detail("It seems these plants are trying to dissuade you from entering any deeper. They are closing in from all around, and you realize that your only way forward might be back the way you came...If you're lucky.").inventory(Weapon.builder().random().build()).build();
 
 
         // THE PLAIN
@@ -78,7 +104,8 @@ public class WorldMap {
         scene[3][7][d] = Scene.builder().name(plain).disallowed(of(Direction.SW)).description(scene[2][7][d].getDescription()).build();
         scene[4][7][d] = Scene.builder().name(plain).description("As you scan the horizon, you glimpse a roiling cloud of dust heading in your direction. At the head of the cloud is a stampede of bizarre four-legged creatures – equine and dun-colored with two large horns, flowing silver manes, and iridescent black scales down their backs and tails.").detail("Judging by their horns and their size, these may be the creatures whose remains you saw in the clearing.").build();
         scene[5][7][d] = Scene.builder().name(river).disallowed(EnumSet.range(Direction.NE, Direction.SE)).description(scene[4][7][d].getDescription()).detail(scene[4][7][d].getDetail()).build();
-        scene[5][8][d] = Scene.builder().name(river).disallowed(EnumSet.range(Direction.NE, Direction.SE)).description("To the East, a river runs high and swift from a recent storm. ").creature(Creature.builder().name("Nullbeast").maxHealth(60).equip(Weapon.builder().generic(WeaponSuffix.HORN).build()).build()).build();
+        scene[0][8][d] = Scene.builder().name(plain).disallowed(EnumSet.range(Direction.SE, Direction.NW)).build();
+        scene[5][8][d] = Scene.builder().name(river).disallowed(EnumSet.range(Direction.NE, Direction.SE)).description("To the East, a river runs high and swift from a recent storm. ").creature(Creature.builder().name("Nullbeast").maxHealth(60).description("One of the equine beasts you saw before has taken notice of you. It charges.").equip(Weapon.builder().generic(WeaponSuffix.HORN).build()).build()).build();
 
 
         // THE STEPPE

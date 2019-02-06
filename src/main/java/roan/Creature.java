@@ -1,8 +1,6 @@
 package roan;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.ArrayList;
 import static roan.Roan.printGreen;
 import static roan.Roan.printRed;
 
@@ -18,7 +16,7 @@ public class Creature {
     private boolean hostile;
 
     // INVENTORY
-    private Map<String, Item> inventory;
+    private ArrayList<Item> inventory;
     private Weapon equippedWeapon;
     private Armor equippedArmor;
 
@@ -28,7 +26,7 @@ public class Creature {
     // METHODS
     public boolean equip(Item item) {
         boolean equipped = false;
-        for (Item inventoryItem : this.inventory.values()) {
+        for (Item inventoryItem : this.inventory) {
             if (item == inventoryItem) {
                 if (item instanceof Weapon) {
                     this.equippedWeapon = (Weapon) item;
@@ -94,9 +92,11 @@ public class Creature {
         this.health -= n;
         if (health <= 0) {
             printRed(this.name + " has fallen.");
+            System.out.println();
             return false;
         } else {
             printRed(this.name + " was injured.");
+            System.out.println();
             return true;
         }
     }
@@ -106,8 +106,10 @@ public class Creature {
         if (this.health > this.maxHealth) {
             this.health = this.maxHealth;
             printGreen(this.name + " looks refreshed.");
+            System.out.println();
         } else if (n > 0) {
             printGreen(this.name + " looks stronger.");
+            System.out.println();
         }
         // TODO: 1/7/2019 potions??
     }
@@ -158,16 +160,16 @@ public class Creature {
         this.description = description;
     }
 
-    public Map<String, Item> getInventory() {
+    public ArrayList<Item> getInventory() {
         return this.inventory;
     }
 
     public void putInventory(Item item) {
-        this.inventory.put(item.getName(), item);
+        this.inventory.add(item);
     }
 
-    public void putInventory(Map<String, Item> inventory) {
-        this.inventory.putAll(inventory);
+    public void putInventory(ArrayList<Item> inventory) {
+        this.inventory.addAll(inventory);
     }
 
     public void removeInventory(Item item) {
@@ -179,8 +181,8 @@ public class Creature {
         this.inventory.clear();
     }
 
-    public Map<String, Item> takeInventory() {
-        Map<String, Item> inventory = this.inventory;
+    public ArrayList<Item> takeInventory() {
+        ArrayList<Item> inventory = this.inventory;
         this.inventory.clear();
         return inventory;
     }
@@ -206,7 +208,7 @@ public class Creature {
         private boolean hostile = true;
 
         // INVENTORY
-        private Map<String, Item> inventory = new HashMap<>();
+        private ArrayList<Item> inventory = new ArrayList<>();
         private Weapon equippedWeapon;
         private Armor equippedArmor;
 
@@ -259,12 +261,12 @@ public class Creature {
         }
 
         public T inventory(Item item) {
-            this.inventory.put(item.getName(), item);
+            this.inventory.add(item);
             return self();
         }
 
         public T equip(Item item) {
-            this.inventory.put(item.getName(), item);
+            this.inventory.add(item);
             if (item instanceof Weapon) {
                 this.equippedWeapon = (Weapon) item;
                 this.luck += this.equippedWeapon.getLuck();

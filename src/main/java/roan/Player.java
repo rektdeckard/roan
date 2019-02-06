@@ -10,12 +10,15 @@ public class Player extends Creature {
     private int yPos;
     private int zPos;
 
+    // PLAYER RESOURCES
+    private int currency = 0;
+
     // METHODS
 
     public void equip(String input) {
         boolean hasItem = false;
         boolean equippedItem = false;
-        for (Item item : super.getInventory().values()) {
+        for (Item item : super.getInventory()) {
             if (input.contains(item.getName().toLowerCase())) {
                 hasItem = true;
                 equippedItem = equip(item);
@@ -38,7 +41,7 @@ public class Player extends Creature {
             hasItem = true;
             unequippedItem = true;
         } else {
-            for (Item item : super.getInventory().values()) {
+            for (Item item : super.getInventory()) {
                 if (input.contains(item.getName().toLowerCase())) {
                     hasItem = true;
                     if (item instanceof Weapon && super.getEquippedWeapon() == item) {
@@ -59,7 +62,11 @@ public class Player extends Creature {
     }
 
     public void rest() {
-        this.heal(Dice.roll(this.getHealth()) + this.getLuck());
+        if (this.getHealth() == this.getMaxHealth()) {
+            System.out.println("You are already already fully rested.");
+        } else {
+            this.heal(Dice.roll(this.getMaxHealth()) + this.getLuck());
+        }
     }
 
     @Override
@@ -67,9 +74,11 @@ public class Player extends Creature {
         this.setHealth(this.getHealth() - n);
         if (this.getHealth() < 0) {
             printRed("Your vision grows faint as the world slips away. You are dead.");
+            System.out.println();
             return false;
         } else {
             printRed("You've been injured.");
+            System.out.println();
             return true;
         }
     }
@@ -77,11 +86,13 @@ public class Player extends Creature {
     @Override
     public void heal(int n) {
         this.setHealth(this.getHealth() + n);
-        if (this.getHealth() > this.getMaxHealth()) {
+        if (this.getHealth() >= this.getMaxHealth()) {
             this.setHealth(this.getMaxHealth());
             printGreen("You feel refreshed.");
+            System.out.println();
         } else {
             printGreen("You feel stronger.");
+            System.out.println();
         }
     }
 

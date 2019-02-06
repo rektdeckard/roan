@@ -1,5 +1,8 @@
 package roan;
 
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Scanner;
 
 public class Roan {
@@ -12,15 +15,16 @@ public class Roan {
     private static boolean playing = true;
     private static boolean alive = true;
 
+
     public static void main(String[] args) {
 
         // GAMEPLAY LOOP
-        while(playing) {
+        while (playing) {
             System.out.print("You open your eyes and rise slowly to your feet. You can't seem to remember who you are, or how you arrived here. ");
-            while(alive) {
+            while (alive) {
                 // Check for hostiles, enter combat or dialogue
-                if (!currentScene.getCreatures().isEmpty()) {
-                    for (Creature creature : currentScene.getCreatures().values()) {
+                if (currentScene.getCreatures() != null && !currentScene.getCreatures().isEmpty()) {
+                    for (Creature creature : currentScene.getCreatures()) {
                         if (creature.isHostile()) {
                             alive = combat();
                         }
@@ -44,7 +48,7 @@ public class Roan {
     // EXPLORE
     private static boolean explore() {
         boolean done = false;
-        while(!done) {
+        while (!done) {
             System.out.print("> ");
             String input = scanner.nextLine().toLowerCase();
             if (input.contains("northeast") || input.equals("ne")) {
@@ -73,7 +77,7 @@ public class Roan {
             } else if (input.contains("attack") || input.contains("ambush")) {
                 // Creature name parsing done in ambush() function
                 ambush(input);
-            } else if (input.equals("rest")) {
+            } else if (input.equals("rest") || input.equals("r")) {
                 player.rest();
             } else if (input.contains("inventory") || input.contains("items") || input.equals("i") || input.equals("inv")) {
                 inventory();
@@ -122,8 +126,7 @@ public class Roan {
                 x--;
                 y++;
             }
-            player.setPos(x, y);
-            currentScene = map.getScene(x, y);
+            currentScene = map.getScene(player, currentScene, x, y);
             return true;
         } else {
             System.out.println("That can't be done.");
@@ -162,8 +165,7 @@ public class Roan {
                 x--;
                 y++;
             }
-            player.setPos(x, y, z);
-            currentScene = map.getScene(x, y, z);
+            currentScene = map.getScene(player, currentScene, x, y, z);
             return true;
         } else {
             System.out.println("That can't be done.");
@@ -173,7 +175,7 @@ public class Roan {
 
     // COMBAT LOOP
     private static boolean combat() {
-        for (Creature combatant : currentScene.getCreatures().values()) {
+        for (Creature combatant : currentScene.getCreatures()) {
             System.out.println(combatant.getDescription());
         }
         // Loop while creatures are alive and has not fled. Return true if player still alive, else false.
@@ -181,7 +183,7 @@ public class Roan {
         while (fighting) {
             // TODO order combatants based on luck and dice roll
             // Enemy attack phase
-            for (Creature combatant : currentScene.getCreatures().values()) {
+            for (Creature combatant : currentScene.getCreatures()) {
                 if (combatant.isHostile()) {
                     alive = attackPlayer(combatant, player);
                     if (!alive) {
@@ -193,10 +195,13 @@ public class Roan {
             System.out.print("# ");
             String input = scanner.nextLine().toLowerCase();
             // TODO remove instakill when releasing
+            // TODO fix iterator. how to dispose of and remove?
             if (input.contains("kill")) {
-                for (Creature combatant : currentScene.getCreatures().values()) {
+                for (final ListIterator<Creature> iterator = currentScene.getCreatures().listIterator(); iterator.hasNext(); ) {
+                    Creature combatant = iterator.next();
                     if (input.contains(combatant.getName().toLowerCase()) || (currentScene.getCreatures().size() == 1)) {
                         currentScene.disposeOf(combatant);
+                        iterator.remove();
                     } else {
                         System.out.println("There is no enemy by that name.");
                     }
@@ -210,7 +215,7 @@ public class Roan {
                 System.out.println("You bide your time.");
             } else if (input.contains("run") || input.contains("flee")) {
                 int combatantLuck = 0;
-                for (Creature combatant : currentScene.getCreatures().values()) {
+                for (Creature combatant : currentScene.getCreatures()) {
                     combatantLuck += combatant.getLuck();
                 }
                 if ((Dice.roll(20) + player.getLuck()) > (Dice.roll(20) + combatantLuck)) {
@@ -258,24 +263,33 @@ public class Roan {
     }
 
     private static boolean attackCreature(String input) {
+        // TODO Fix iterator problem
+        Creature combatant = null;
         if (player.getEquippedWeapon() != null) {
-            for (Creature combatant : currentScene.getCreatures().values()) {
-                if (input.contains(combatant.getName().toLowerCase()) || (currentScene.getCreatures().size() == 1)) {
-                    if (combatant.getEquippedArmor() != null) {
-                        if (Dice.roll(20) + player.getMeleeAttack() + player.getLuck() > combatant.getEquippedArmor().getArmor() + combatant.getLuck()) {
-                            alive = combatant.damage(Dice.roll(player.getEquippedWeapon().getDamage()));
-                        } else {
-                            System.out.println("Your attack misses.");
-                        }
-                    } else {
-                        alive = combatant.damage(Dice.roll(player.getEquippedWeapon().getDamage()));
+            if (currentScene.getCreatures().size() == 1) {
+                combatant = currentScene.getCreatures().get(0);
+            } else {
+                for (Creature creature : currentScene.getCreatures()) {
+                    if (input.contains(creature.getName().toLowerCase())) {
+                        combatant = creature;
                     }
-                    if (!alive) {
-                        currentScene.disposeOf(combatant);
+                }
+            }
+            if (combatant != null) {
+                if (combatant.getEquippedArmor() != null) {
+                    if (Dice.roll(20) + player.getMeleeAttack() + player.getLuck() > combatant.getEquippedArmor().getArmor() + combatant.getLuck()) {
+                        alive = combatant.damage(Dice.roll(player.getEquippedWeapon().getDamage()));
+                    } else {
+                        System.out.println("Your attack misses.");
                     }
                 } else {
-                    System.out.println("There is no enemy by that name.");
+                    alive = combatant.damage(Dice.roll(player.getEquippedWeapon().getDamage()));
                 }
+                if (!alive) {
+                    currentScene.disposeOf(combatant);
+                }
+            } else{
+                System.out.println("There is no enemy by that name.");
             }
         } else {
             System.out.println("You have no weapon equipped!");
@@ -285,9 +299,9 @@ public class Roan {
     }
 
     private static void ambush(String input) {
-        for (Creature creature : currentScene.getCreatures().values()) {
-            if (input.contains(creature.getName().toLowerCase())) {
-                creature.setHostile(true);
+        for (Creature combatant : currentScene.getCreatures()) {
+            if (input.contains(combatant.getName().toLowerCase())) {
+                combatant.setHostile(true);
                 combat();
             } else {
                 System.out.println("There is nobody here by that name.");
@@ -301,10 +315,18 @@ public class Roan {
         if (currentScene.canExamine()) {
             System.out.println(currentScene.getDetail());
             if (!currentScene.getCreatures().isEmpty()) {
-                System.out.println("Creatures: " + currentScene.getCreatures().keySet());
+                System.out.print("Creatures: ");
+                for (Creature creature : currentScene.getCreatures()) {
+                    System.out.print("[" + creature.getName() + "] ");
+                }
+                System.out.println();
             }
             if (!currentScene.getInventory().isEmpty()) {
-                System.out.println("Items: " + currentScene.getInventory().keySet());
+                System.out.print("Items: ");
+                for (Item item : currentScene.getInventory()) {
+                    System.out.print("[" + item.getName() + "] ");
+                }
+                System.out.println();
             }
         } else {
             System.out.println("You cannot see.");
@@ -327,18 +349,25 @@ public class Roan {
             System.out.println("There is nothing here.");
         } else if (input.contains("all") || input.equals("t") || input.equals("take")) {
             System.out.print("Received: ");
-            printYellow(currentScene.getInventory().keySet().toString());
+            for (Item item : currentScene.getInventory()) {
+                printYellow("[" + item.getName() + "] ");
+            }
+            System.out.println();
             player.putInventory(currentScene.getInventory());
             currentScene.clearInventory();
         } else {
             boolean hasItem = false;
-            for (Item sceneItem : currentScene.getInventory().values()) {
-                if (input.contains(sceneItem.getName().toLowerCase())) {
+            for (Item item : currentScene.getInventory()) {
+                if (input.contains(item.getName().toLowerCase())) {
                     hasItem = true;
-                    player.putInventory(sceneItem);
-                    System.out.println("Received: ");
-                    printYellow("[" + sceneItem.getName() + "]");
-                    currentScene.removeInventory(sceneItem);
+                    player.putInventory(item);
+                    if (item.getDescription() != null) {
+                        System.out.println(item.getDescription());
+                    }
+                    System.out.print("Received: ");
+                    printYellow("[" + item.getName() + "] ");
+                    System.out.println();
+                    currentScene.removeInventory(item);
                 }
             }
             if (!hasItem) {
@@ -350,19 +379,22 @@ public class Roan {
 
     private static boolean climb() {
         if ((currentScene.getClimbVertical() == Vertical.UP) || (currentScene.getClimbVertical() == Vertical.DOWN)) {
-            if (player.getInventory().containsKey("Rope")) {
-                if (Dice.roll(20) + player.getLuck() >= 10) {
-                    System.out.println(currentScene.getSucceed());
-                    return go(currentScene.getClimbDirection(), currentScene.getClimbVertical());
-                } else {
-                    System.out.println(currentScene.getFail());
-                    player.damage(Dice.roll(20));
-                    return false;
+            boolean hasRope = false;
+            for (Item item : player.getInventory()) {
+                if (item.getName().toLowerCase().equals("rope")) {
+                    hasRope = true;
+                    if (Dice.roll(20) + player.getLuck() >= 10) {
+                        System.out.println(currentScene.getSucceed());
+                        return go(currentScene.getClimbDirection(), currentScene.getClimbVertical());
+                    } else {
+                        System.out.println(currentScene.getFail());
+                        player.damage(Dice.roll(20));
+                        return false;
+                    }
                 }
-            } else {
-                System.out.println("You don't have any rope.");
-                return false;
             }
+            System.out.println("You don't have any rope.");
+            return false;
         } else {
             System.out.println("You can't do that here.");
             return false;
@@ -371,7 +403,11 @@ public class Roan {
 
     private static void inventory() {
         if (!player.getInventory().isEmpty()) {
-            System.out.println("Inventory: " + player.getInventory().keySet());
+            System.out.print("Inventory: ");
+            for (Item item : player.getInventory()) {
+                System.out.print("[" + item.getName() + "] ");
+            }
+            System.out.println();
         } else {
             System.out.println("You have nothing to your name.");
         }
@@ -385,6 +421,13 @@ public class Roan {
 
     private static void location() {
         System.out.println("[" + player.getXPos() + "," + player.getYPos() + "," + player.getZPos() + "] " + currentScene.getName());
+        String mapFile = "PlayerMap.txt";
+        InputStream inputStream = Roan.class.getResourceAsStream(mapFile);
+        if (inputStream == null) {
+            System.out.println("Resource not found: " + mapFile);
+        } else {
+            System.out.println(inputStream.toString());
+        }
     }
 
     private static void quit() {
@@ -395,22 +438,23 @@ public class Roan {
 
     // PRINT COLORS
     public static void printRed(String string) {
-        System.out.println((char)27 + "[31m" + string + (char)27 + "[39;49m");
+        System.out.print((char) 27 + "[31m" + string + (char) 27 + "[39;49m");
     }
 
     public static void printYellow(String string) {
-        System.out.println((char)27 + "[33m" + string + (char)27 + "[39;49m");
+        System.out.print((char) 27 + "[33m" + string + (char) 27 + "[39;49m");
     }
 
     public static void printGreen(String string) {
-        System.out.println((char)27 + "[32m" + string + (char)27 + "[39;49m");
+        System.out.print((char) 27 + "[32m" + string + (char) 27 + "[39;49m");
     }
 
     public static void printBlue(String string) {
-        System.out.println((char)27 + "[34m" + string + (char)27 + "[39;49m");
+        System.out.print((char) 27 + "[34m" + string + (char) 27 + "[39;49m");
     }
 
     public static void printMagenta(String string) {
-        System.out.println((char)27 + "[35m" + string + (char)27 + "[39;49m");
+        System.out.print((char) 27 + "[35m" + string + (char) 27 + "[39;49m");
     }
+
 }

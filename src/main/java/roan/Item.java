@@ -96,6 +96,7 @@ public class Item {
     // SOLE CONSTRUCTOR
     protected Item(Builder<?> builder) {
         this.name = builder.name;
+        this.description = builder.description;
         this.luck = builder.luck;
         this.value = value;
     }

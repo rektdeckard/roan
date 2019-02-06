@@ -1,8 +1,7 @@
 package roan;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Scene {
 
@@ -18,8 +17,8 @@ public class Scene {
     private Vertical climbVertical;
 
     // SCENE INVENTORY
-    private Map<String, Item> inventory;
-    private Map<String, Creature> creatures;
+    private ArrayList<Item> inventory;
+    private ArrayList<Creature> creatures;
 
     // SCENE TEXT
     private String description;
@@ -39,7 +38,7 @@ public class Scene {
 
     public void disposeOf(Creature creature) {
         this.putInventory(creature.getInventory());
-        this.removeCreature(creature);
+        this.creatures.remove(creature);
     }
 
     // SETTERS & GETTERS
@@ -108,36 +107,40 @@ public class Scene {
         this.allowedVertical = verticals;
     }
 
-    public Map<String, Item> getInventory() {
+    public ArrayList<Item> getInventory() {
         return this.inventory;
     }
 
     public void putInventory(Item item) {
-        this.inventory.put(item.getName(), item);
+        this.inventory.add(item);
     }
 
-    public void putInventory(Map<String, Item> inventory) {
-        this.inventory.putAll(inventory);
+    public void putInventory(ArrayList<Item> inventory) {
+        this.inventory.addAll(inventory);
     }
 
     public void removeInventory(Item item) {
-        this.inventory.remove(item.getName());
+        this.inventory.remove(item);
     }
 
     public void clearInventory() {
         this.inventory.clear();
     }
 
-    public Map<String, Creature> getCreatures() {
-        return this.creatures;
+    public ArrayList<Creature> getCreatures() throws NullPointerException {
+        try {
+            return this.creatures;
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     public void putCreature(Creature creature) {
-        this.creatures.put(creature.getName(), creature);
+        this.creatures.add(creature);
     }
 
     public void removeCreature(Creature creature) {
-        this.creatures.remove(creature.getName());
+        this.creatures.remove(creature);
     }
 
     public String getDescription() {
@@ -186,8 +189,8 @@ public class Scene {
         private Vertical climbVertical = null;
 
         // SCENE INVENTORY
-        private Map<String, Item> inventory = new HashMap<>();
-        private Map<String, Creature> creatures = new HashMap<>();
+        private ArrayList<Item> inventory = new ArrayList<>();
+        private ArrayList<Creature> creatures = new ArrayList<>();
 
         // SCENE TEXT
         String description = "You shouldn't be here.";
@@ -235,12 +238,12 @@ public class Scene {
         }
 
         public T inventory(Item item) {
-            this.inventory.put(item.getName(), item);
+            this.inventory.add(item);
             return self();
         }
 
         public T creature(Creature creature) {
-            this.creatures.put(creature.getName(), creature);
+            this.creatures.add(creature);
             return self();
         }
 
